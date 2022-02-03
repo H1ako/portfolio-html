@@ -1,0 +1,7 @@
+<svg id="menu-icon" width="50" height="50" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g>
+<path id="bottomBar" d="M1 8L12 19" stroke="#317FF3"/>
+<path id="middleBar" d="M4.5 4.5L15.5 15.5" stroke="#F331A6"/>
+<path id="topBar" d="M8 1L19 12" stroke="#317FF3"/>
+</g>
+</svg>
