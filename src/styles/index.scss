@@ -17,11 +17,13 @@ $paddingText: .125em .5em;
 *::before {
     box-sizing: border-box;
 }
+
 body {
     overflow: hidden;
     font-family: 'Roboto';
     font-weight: 200;
 }
+
 .app {
     position: relative;
     color: $colorText;
@@ -30,12 +32,51 @@ body {
     background: $colorBg;
 }
 
+a {
+    text-decoration: none;
+    color: $colorText;
+    
+}
+
 .cursor {
     position: fixed;
 }
 
 .fixed-nav {
     z-index: 1000000;
+
+    &__about {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-100%);
+        flex-direction: column;
+        align-items: center;
+        font-family: 'Bebas Neue', cursive;
+        font-weight: 400;
+        letter-spacing: 2px;
+        display: flex;
+        opacity: 0;
+        transition: 300ms;
+
+        &.active {
+
+            opacity: .6;
+            transform: translateX(-50%) translateY(0);
+        }
+    
+        h5 {
+            padding: $paddingText;
+            font-size: 2rem;
+            color: $colorTextLight;
+            margin: 0;
+        }
+    
+        h4 {
+            font-size: .75rem;
+            margin: 0;
+        }
+    }
 
     &__menu-btn {
         position: absolute;
@@ -93,10 +134,15 @@ body {
             align-items: center;
             gap: 1rem;
             padding: 0;
+
             .current {
                 color: $colorTextLight;
                 font-size: 1.5rem;
                 font-weight: 300;
+
+                a {
+                    color: $colorTextLight;
+                }
             }
         }
     }
@@ -118,13 +164,13 @@ body {
     &::before {
         content: '';
         position: absolute;
-        transform-origin: top right;
+        transform-origin: right;
         left: 0;
         top: 0;
         width: 100vw;
         height: 100vh;
         transition: 300ms;
-        transform: scale(0);
+        transform: scaleX(0);
     }
 
     &::after {
@@ -142,14 +188,14 @@ body {
     &.active {
         &::after,
         &::before {
-            transform: scale(1);
+            transform: scaleX(1);
         }
         &::before {
             transition-delay: 0ms;
         }
 
         .menu__content {
-            transform: scale(1);
+            transform: scaleX(1);
 
             .content__nav {
                 opacity: 1;
@@ -167,12 +213,12 @@ body {
         width: 100vw;
         height: 100vh;
         background: $colorMain;
-        transform: scale(0);
+        transform: scaleX(0);
         display: flex;
         align-items: center;
         justify-content: center;
         color: $colorTextDark;
-        transform-origin: top right;
+        transform-origin: right;
         transition: 300ms;
         transition-delay: 300ms;
 
@@ -211,10 +257,17 @@ body {
                 text-transform: uppercase;
                 cursor: pointer;
 
+                a {
+                    color: $colorTextDark
+                }
+
                 &.current {
                     font-weight: 600;
                     background: $colorAccent;
-                    color: white;
+
+                    a {
+                        color: $colorTextLight;
+                    }
                 }
 
                 &:hover,
