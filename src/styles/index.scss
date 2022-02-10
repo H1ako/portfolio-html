@@ -33,6 +33,10 @@ body {
     background: $colorBg;
 }
 
+.no-select {
+    user-select: none;
+}
+
 a {
     text-decoration: none;
     color: $colorText;
@@ -76,38 +80,67 @@ a {
 }
 
 .fixed-nav {
-    z-index: 1000000;
+    z-index: 1000000;    
 
-    &__about {
+    &__top {
         position: absolute;
         top: 10px;
         left: 50%;
-        transform: translateX(-50%) translateY(-100%);
+        transform: translateX(-50%);
+        display: flex;
         flex-direction: column;
         align-items: center;
-        font-family: 'Bebas Neue', cursive;
-        font-weight: 400;
-        letter-spacing: 2px;
-        display: flex;
-        opacity: 0;
-        transition: 300ms;
+        gap: 1rem;
 
-        &.active {
-
-            opacity: .6;
-            transform: translateX(-50%) translateY(0);
+        .top__about {
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Bebas Neue', cursive;
+            font-weight: 400;
+            letter-spacing: 2px;
+            display: flex;
+            opacity: 0;
+            transform: translateY(-100%);
+            transition: 300ms;
+    
+            &.active {
+                opacity: .6;
+                transform: translateY(0);
+            }
+        
+            h5 {
+                padding: $paddingText;
+                font-size: 2rem;
+                color: $colorTextLight;
+                margin: 0;
+            }
+        
+            h4 {
+                font-size: .75rem;
+                margin: 0;
+            }
         }
     
-        h5 {
-            padding: $paddingText;
-            font-size: 2rem;
-            color: $colorTextLight;
-            margin: 0;
-        }
+        .top__drawing-tools {
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            display: flex;
+            opacity: 0;
+            transition: 300ms;
+            transform: translateY(-100%);
     
-        h4 {
-            font-size: .75rem;
-            margin: 0;
+            &.active {
+                opacity: 1;
+                transform: translateY(0);
+            }
+    
+            .drawing-tools__color {
+                width: 25px;
+                height: 25px;
+                opacity: .6;
+                border-radius: 50%;
+            }
         }
     }
 
@@ -136,6 +169,11 @@ a {
         transform-origin: 50% 0;
         transform: rotateZ(-90deg) translateY(-50%);
         display: none;
+        transition: 300ms;
+
+        &:hover {
+            color: $colorTextLight;
+        }
 
         @media (min-width: 744px) {
             display: block;
@@ -181,16 +219,28 @@ a {
             align-items: center;
             gap: 1rem;
             padding: 0;
-
-            .current {
-                color: $colorTextLight;
-                font-size: 1.5rem;
-                font-weight: 300;
-
+            
+            li {
+                
                 a {
+                    transition: color 300ms;
+                }
+
+                &:hover a {
                     color: $colorTextLight;
                 }
+
+                &.current {
+                    font-size: 1.5rem;
+                    font-weight: 300;
+    
+                    a {
+                        color: $colorTextLight;
+                    }
+                }
             }
+
+            
         }
     }
 

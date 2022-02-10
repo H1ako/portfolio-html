@@ -9,7 +9,8 @@ function About() {
 
     return (
     <div className={`page about home${isActive ? ' active' : ''}`}>
-        <h5 className="color-main">About</h5>
+        <h5>Sobolev Nikita</h5>
+        <h4>FullStack Web Developer</h4>
     </div>
     )
 }

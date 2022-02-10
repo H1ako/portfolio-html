@@ -1,16 +1,38 @@
-import { useRecoilState } from 'recoil';
-import { menuIsOpenAtom } from '../../recoil_atoms/NavAtom';
-import { Link, useLocation } from "react-router-dom";
+// global
+import { Link, useLocation } from "react-router-dom"
+// recoil
+import { useRecoilState } from 'recoil'
+import { cursorColorAtom } from "../../recoil_atoms/CursorAtom"
+import { menuIsOpenAtom } from '../../recoil_atoms/NavAtom'
 
-function FixedNav() {
-    const [menuIsOpen, setMenuIsOpen] = useRecoilState(menuIsOpenAtom)
+function FixedNav({canvas}) {
+    const cursorColors = [
+        '#CBCDD0',
+        '#317FF3',
+        '#F331A6'
+    ]
     const location = useLocation()
+    const [currentColor, setCurrentColor] = useRecoilState(cursorColorAtom)
+    const [menuIsOpen, setMenuIsOpen] = useRecoilState(menuIsOpenAtom)
 
     return (
     <div className="fixed-nav">
-        <div className={`fixed-nav__about${location.pathname !== '/' ? ' active' : ''}`}>
-            <h5>Sobolev Nikita</h5>
-            <h4>FullStack Web Developer</h4>
+        <div className="fixed-nav__top">
+            <div className={`top__about${location.pathname !== '/about' ? ' active' : ''}`}>
+                <h5>Sobolev Nikita</h5>
+                <h4>FullStack Web Developer</h4>
+            </div>
+            <div className={`top__drawing-tools${location.pathname === '/' ? ' active' : ''}`}>
+                {cursorColors.map(color => (
+                    <div
+                        key={color}
+                        onMouseEnter={() => setCurrentColor(color)}
+                        className="drawing-tools__color"
+                        style={{background: color}}
+                    />
+                ))}
+                <button onClick={() => setCurrentColor('black')}>Black</button>
+            </div>
         </div>
         <button onClick={() => setMenuIsOpen(!menuIsOpen)} className='fixed-nav__menu-btn'>
             <img src="/assets/Menu.svg" alt="Menu" />

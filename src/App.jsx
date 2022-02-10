@@ -18,7 +18,6 @@ function App() {
   const navigateTo = useNavigate()
   const location = useLocation()
   const [currentRouteIndex, setCurrentRouteIndex] = useState(routes.indexOf(location.pathname))
-  const [isCursor, setIsCursor] = useState(false)
   const canvas = useRef()
   
   const onScroll = e => {
@@ -36,23 +35,9 @@ function App() {
   useEffect(() => {
     setCurrentRouteIndex(routes.indexOf(location.pathname))
   }, [location.pathname])
-  
-  useEffect(() => {
-    setIsCursor(true)
-  }, [])
-  // const drawing = (e) => {
-  //   const circle = new Path2D()
-  //   circle.arc(cursorOutlinePos.x, cursorOutlinePos.y, 10, 1, 2 * Math.PI)
-  //   // canvasContext.beginPath()
-  //   // canvasContext.moveTo(e.pageX, e.pageY)
-  //   // canvasContext.lineTo(e.pageX, e.pageY)
-  //   // canvasContext.closePath()
-  //   // canvasContext.stroke()
-  //   canvasContext.fill(circle)
-  // }
 
   return (
-    <div className="app" onWheel={onScroll}>
+    <div className={`app${location.pathname === '/' ? ' no-select' : ''}`} onWheel={onScroll}>
       <canvas ref={canvas} className='graph'/>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -60,8 +45,8 @@ function App() {
         <Route path="/skills" element={<Skills />} />
         <Route path="/works" element={<Works />} />
       </Routes>
-      {isCursor ? <Cursor canvas={canvas}/> : ''}
-      <FixedNav />
+      {canvas.current ? <Cursor canvas={canvas}/> : ''}
+      {canvas.current ? <FixedNav canvas={canvas}/> : ''}
       <Menu />
     </div>
   )

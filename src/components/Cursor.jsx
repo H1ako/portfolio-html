@@ -1,20 +1,27 @@
-import { useRef, useState, useCallback, useLayoutEffect, useEffect } from 'react'
+// global
+import { useRef, useState, useCallback, useEffect } from 'react'
+// hooks
 import useEventListener from '../../hooks/useEventListener'
+// recoil
+import { useRecoilState } from 'recoil'
+import { cursorColorAtom } from '../../recoil_atoms/CursorAtom'
 
 export default function Cursor({
     canvas,
     outerScale = 1.5,
     innerScale = 1.2,
-    firstColor = '#CBCDD0',
-    accentColor = '#F331A6',
-    mainColor = '#317FF3'
+    outerSpeedSlow = 50,
+    outerSpeedDefault = 10,
   }) {
+
     const cursorOuterRef = useRef()
     const cursorInnerRef = useRef()
     const requestRef = useRef()
     const previousTimeRef = useRef()
     const [coords, setCoords] = useState({ x: 0, y: 0 })
-    const [isActive, setIsActive] = useState(false)
+    const [currentColor, setCurrentColor] = useRecoilState(cursorColorAtom)
+    const outerSpeed = useRef(outerSpeedDefault)
+    let isActive = useRef(false)
     let endX = useRef(0)
     let endY = useRef(0)
     let canvasContext = useRef(null)
@@ -41,14 +48,14 @@ export default function Cursor({
     const animateOuterCursor = useCallback(
       (time) => {
         if (previousTimeRef.current !== undefined) {
-          coords.x += (endX.current - coords.x) / 50
-          coords.y += (endY.current - coords.y) / 50
+          coords.x += (endX.current - coords.x) / outerSpeed.current
+          coords.y += (endY.current - coords.y) / outerSpeed.current
           cursorOuterRef.current.style.top = coords.y + 'px'
           cursorOuterRef.current.style.left = coords.x + 'px'
-          // console.log(isActive)
-          draw(coords.x+20, coords.y+20)
+          if (isActive.current) {
+            draw(coords.x+20, coords.y+20)
+          }
         }
-        console.log(isActive)
         previousTimeRef.current = time
         requestRef.current = requestAnimationFrame(animateOuterCursor)
       },
@@ -63,27 +70,38 @@ export default function Cursor({
 
       const ctx = canvas.current.getContext('2d')
       ctx.scale(2, 2)
-      ctx.fillStyle = accentColor //mainColor
+      ctx.fillStyle = currentColor
+      ctx.strokeStyle = currentColor
+      ctx.shadowColor = 'black'
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
-      ctx.strokeStyle = accentColor //mainColor
-      ctx.shadowColor = 'black'
       ctx.shadowBlur = 10
       ctx.lineWidth = 10
       canvasContext.current = ctx
     }, [window.innerWidth, window.innerHeight])
 
+    useEffect(() => {
+      canvasContext.current.fillStyle = currentColor
+      canvasContext.current.strokeStyle = currentColor
+    }, [currentColor])
+
     useEffect(() => requestRef.current = requestAnimationFrame(animateOuterCursor), [animateOuterCursor])
 
-    const onMouseDown  = useCallback(() => setIsActive(true), [])
-    const onMouseUp    = useCallback(() => setIsActive(false), [])
+    const onMouseDown  = useCallback(() => {
+      outerSpeed.current = outerSpeedSlow
+      isActive.current = true
+    }, [])
+    const onMouseUp    = useCallback(() => {
+      outerSpeed.current = outerSpeedDefault
+      isActive.current = false
+    }, [])
 
     useEventListener('mousemove', onMouseMove, document)
     useEventListener('mousedown', onMouseDown, document)
     useEventListener('mouseup', onMouseUp, document)
 
     useEffect(() => {
-      if (isActive) {
+      if (isActive.current) {
         cursorInnerRef.current.style.transform = `scale(${innerScale})`
         cursorOuterRef.current.style.transform = `scale(${outerScale})`
       } else {
@@ -94,7 +112,7 @@ export default function Cursor({
 
     return (
       <>
-        <div className='cursor' ref={cursorInnerRef} />
+        <div className='cursor' ref={cursorInnerRef} style={{background: currentColor}} />
         <div className='cursor-follower' ref={cursorOuterRef} />
       </>
     )

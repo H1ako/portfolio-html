@@ -9,8 +9,7 @@ function Home() {
 
     return (
     <div className={`page home${isActive ? ' active' : ''}`}>
-        <h5 className="color-main">Sobolev Nikita</h5>
-        <h4>FullStack Web Developer</h4>
+        
     </div>
     )
 }
