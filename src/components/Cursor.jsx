@@ -13,17 +13,20 @@ export default function Cursor({
     outerSpeedSlow = 50,
     outerSpeedDefault = 10,
   }) {
-
+    // for cursor body
     const cursorOuterRef = useRef()
     const cursorInnerRef = useRef()
+    let isActive = useRef(false)
+    // for cursor outer position
     const requestRef = useRef()
     const previousTimeRef = useRef()
-    const [coords, setCoords] = useState({ x: 0, y: 0 })
-    const [currentColor, setCurrentColor] = useRecoilState(cursorColorAtom)
     const outerSpeed = useRef(outerSpeedDefault)
-    let isActive = useRef(false)
+    const [coords, setCoords] = useState({ x: 0, y: 0 })
     let endX = useRef(0)
     let endY = useRef(0)
+    // for cursor and drawing colors
+    const [currentColor, setCurrentColor] = useRecoilState(cursorColorAtom)
+    // for drawing board
     let canvasContext = useRef(null)
 
     const draw = (x, y) => {
@@ -33,6 +36,7 @@ export default function Cursor({
       canvasContext.current.stroke()
     }
 
+    // for moving mouse inner
     const onMouseMove = useCallback(({ clientX, clientY }) => {
       const x = clientX - 10
       const y = clientY - 10
@@ -44,7 +48,7 @@ export default function Cursor({
       canvasContext.current.beginPath()
       canvasContext.current.moveTo(clientX, clientY)
     }, [])
-
+    // for moving cursor outer
     const animateOuterCursor = useCallback(
       (time) => {
         if (previousTimeRef.current !== undefined) {
@@ -61,7 +65,8 @@ export default function Cursor({
       },
       [requestRef]
     )
-
+    // for setting default drawing board
+    // and reload it when window's width and height changes
     useEffect(() => {
       canvas.current.width = window.innerWidth * 2
       canvas.current.height = window.innerHeight * 2
@@ -79,12 +84,12 @@ export default function Cursor({
       ctx.lineWidth = 10
       canvasContext.current = ctx
     }, [window.innerWidth, window.innerHeight])
-
+    // for changing cursor and drawing color
     useEffect(() => {
       canvasContext.current.fillStyle = currentColor
       canvasContext.current.strokeStyle = currentColor
     }, [currentColor])
-
+    // for animate cursor outer
     useEffect(() => requestRef.current = requestAnimationFrame(animateOuterCursor), [animateOuterCursor])
 
     const onMouseDown  = useCallback(() => {
@@ -99,7 +104,7 @@ export default function Cursor({
     useEventListener('mousemove', onMouseMove, document)
     useEventListener('mousedown', onMouseDown, document)
     useEventListener('mouseup', onMouseUp, document)
-
+    // for changing cursor on every click
     useEffect(() => {
       if (isActive.current) {
         cursorInnerRef.current.style.transform = `scale(${innerScale})`

@@ -1,19 +1,20 @@
 // global
 import { Link, useLocation } from "react-router-dom"
 // recoil
-import { useRecoilState } from 'recoil'
-import { cursorColorAtom } from "../../recoil_atoms/CursorAtom"
+import { useRecoilState, useRecoilValue } from 'recoil'
+import { cursorColorAtom, cursorColorsAtom } from "../../recoil_atoms/CursorAtom"
 import { menuIsOpenAtom } from '../../recoil_atoms/NavAtom'
+import { routesAtom } from "../../recoil_atoms/RouteAtom"
 
 function FixedNav({canvas}) {
-    const cursorColors = [
-        '#CBCDD0',
-        '#317FF3',
-        '#F331A6'
-    ]
     const location = useLocation()
+    // for cursor and drawing color 
+    const cursorColors = useRecoilValue(cursorColorsAtom)
     const [currentColor, setCurrentColor] = useRecoilState(cursorColorAtom)
+    // for menu
     const [menuIsOpen, setMenuIsOpen] = useRecoilState(menuIsOpenAtom)
+    // for routes
+    const routes = useRecoilValue(routesAtom)
 
     return (
     <div className="fixed-nav">
@@ -41,10 +42,14 @@ function FixedNav({canvas}) {
         <nav>
             <div className="nav__pointer"/>
             <ul>
-                <li className={location.pathname === '/' ? 'current' : ''}><Link to='/'>Home</Link></li>
-                <li className={location.pathname === '/about' ? 'current' : ''}><Link to='/about'>About</Link></li>
-                <li className={location.pathname === '/skills' ? 'current' : ''}><Link to='/skills'>Skills</Link></li>
-                <li className={location.pathname === '/works' ? 'current' : ''}><Link to='/works'>Works</Link></li>
+                {routes.map(route => (
+                    <li
+                        key={route.url}
+                        className={location.pathname === route.url ? 'current' : ''}
+                    >
+                        <Link to={route.url}>{route.name}</Link>
+                    </li>
+                ))}
             </ul>
         </nav>
         <div className="fixed-nav__arrow">

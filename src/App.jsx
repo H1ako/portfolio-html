@@ -1,5 +1,10 @@
+//global
 import { useState, useEffect, useRef } from "react"
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom"
+// recoil
+import { useRecoilValue } from "recoil"
+import { routesAtom } from "../recoil_atoms/RouteAtom"
+// components
 import FixedNav from './components/FixedNav'
 import Cursor from "./components/Cursor"
 import Menu from './components/Menu'
@@ -9,34 +14,40 @@ import Works from "./components/Works"
 import Skills from "./components/Skills"
 
 function App() {
-  const routes = [
-    '/',
-    '/about',
-    '/skills',
-    '/works'
-  ]
   const navigateTo = useNavigate()
   const location = useLocation()
-  const [currentRouteIndex, setCurrentRouteIndex] = useState(routes.indexOf(location.pathname))
+  // for routing
+  const routes = useRecoilValue(routesAtom)
+  const [currentRouteIndex, setCurrentRouteIndex] = useState('/')
+  // for drawing board
   const canvas = useRef()
-  
+
+  // for redirecting user to the next or prev route on scroll
   const onScroll = e => {
-    if (e.deltaY > 0 && currentRouteIndex < routes.length - 1) { // scroll down
-      navigateTo(routes[currentRouteIndex + 1])
+    // scroll down
+    if (e.deltaY > 0 && currentRouteIndex < routes.length - 1) {
+      navigateTo(routes[currentRouteIndex + 1].url)
       setCurrentRouteIndex(currentRouteIndex + 1)
-      
+      return
     }
-    if (e.deltaY < 0 && currentRouteIndex > 0) { // scroll up
-      navigateTo(routes[currentRouteIndex - 1])
+     // scroll up
+    if (e.deltaY < 0 && currentRouteIndex > 0) {
+      navigateTo(routes[currentRouteIndex - 1].url)
       setCurrentRouteIndex(currentRouteIndex - 1)
     }
   }
-
+  // for setting current route index when url changes
   useEffect(() => {
-    setCurrentRouteIndex(routes.indexOf(location.pathname))
+    for (let routeIndex=0; routeIndex < routes.length; routeIndex++) {
+      if (routes[routeIndex].url === location.pathname) {
+        setCurrentRouteIndex(routeIndex)
+        break
+      }
+    }
   }, [location.pathname])
 
   return (
+    // this needs for disable selecting if current route is home
     <div className={`app${location.pathname === '/' ? ' no-select' : ''}`} onWheel={onScroll}>
       <canvas ref={canvas} className='graph'/>
       <Routes>
@@ -45,7 +56,8 @@ function App() {
         <Route path="/skills" element={<Skills />} />
         <Route path="/works" element={<Works />} />
       </Routes>
-      {canvas.current ? <Cursor canvas={canvas}/> : ''}
+      {/* this needs for getting drawing board after rendering */}
+      {canvas.current ? <Cursor canvas={canvas}/> : ''} 
       {canvas.current ? <FixedNav canvas={canvas}/> : ''}
       <Menu />
     </div>
