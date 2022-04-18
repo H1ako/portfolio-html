@@ -1,17 +1,19 @@
-//global
+//global dependencies
 import { useState, useEffect, useRef } from "react"
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom"
-// recoil
 import { useRecoilValue } from "recoil"
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
+// recoil atoms
 import { routesAtom } from "../recoil_atoms/RouteAtom"
 // components
 import FixedNav from './components/FixedNav'
 import Cursor from "./components/Cursor"
 import Menu from './components/Menu'
-import Home from './components/Home'
-import About from "./components/About"
-import Works from "./components/Works"
-import Skills from "./components/Skills"
+// pages
+import Home from './components/pages/Home'
+import About from "./components/pages/About"
+import Works from "./components/pages/Works"
+import Skills from "./components/pages/Skills"
 
 function App() {
   const navigateTo = useNavigate()
@@ -47,16 +49,26 @@ function App() {
   }, [location.pathname])
 
   return (
-    // this needs for disable selecting if current route is home
+    // this is for disabling selecting if current route is home
     <div className={`app${location.pathname === '/' ? ' no-select' : ''}`} onWheel={onScroll}>
       <canvas ref={canvas} className='graph'/>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/skills" element={<Skills />} />
-        <Route path="/works" element={<Works />} />
-      </Routes>
-      {/* this needs for getting drawing board after rendering */}
+        <TransitionGroup component={null}>
+          <CSSTransition
+            key={location.key}
+            unmountOnExit
+            appear
+            timeout={450}
+            classNames='fade'
+          >
+            <Routes location={location}>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/skills" element={<Skills />} />
+              <Route path="/works" element={<Works />} />
+            </Routes>
+          </CSSTransition>
+        </TransitionGroup>
+      {/* this is for getting drawing board after rendering */}
       {canvas.current ? <Cursor canvas={canvas}/> : ''} 
       {canvas.current ? <FixedNav canvas={canvas}/> : ''}
       <Menu />

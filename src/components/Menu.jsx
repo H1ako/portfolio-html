@@ -26,6 +26,9 @@ function Menu() {
                         <Link to={route.url}>{route.name}</Link>
                     </li>
                 ))}
+                <a className='content__email' href="mailto:nikita-sobolev-wd@yandex.ru">
+                    nikita-sobolev-wd@yandex.ru
+                </a>
             </ul>
         </div>
     </div>
