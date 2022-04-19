@@ -86,11 +86,13 @@ export default function Cursor({
       ctx.lineWidth = 10
       canvasContext.current = ctx
     }, [window.innerWidth, window.innerHeight])
+
     // for changing cursor and drawing color
     useEffect(() => {
       canvasContext.current.fillStyle = currentColor
       canvasContext.current.strokeStyle = currentColor
     }, [currentColor])
+    
     // for animate cursor outer
     useEffect(() => requestRef.current = requestAnimationFrame(animateOuterCursor), [animateOuterCursor])
 
