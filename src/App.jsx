@@ -1,16 +1,13 @@
 //global dependencies
 import { useState, useEffect, useRef } from "react"
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom"
-import { useRecoilState, useRecoilValue } from "recoil"
+import { useRecoilValue } from "recoil"
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 // recoil atoms
 import { routesAtom } from "../recoil_atoms/RouteAtom"
-import { canvasAtom, canvasContextAtom } from "../recoil_atoms/CanvasAtom"
-import { cursorInnerPositionAtom, cursorIsActiveAtom } from "../recoil_atoms/CursorAtom"
 // components
 import FixedNav from './components/FixedNav'
 import Cursor from "./components/Cursor"
-import CursorV2 from "./components/CursorV2"
 import Menu from './components/Menu'
 // pages
 import Home from './components/pages/Home'
@@ -24,17 +21,8 @@ function App() {
   // for routing
   const routes = useRecoilValue(routesAtom)
   const [currentRouteIndex, setCurrentRouteIndex] = useState('/')
-  // for cursor
-  const [cursorIsActive, setCursorIsActive] = useRecoilState(cursorIsActiveAtom)
-  const [cursorInnerPosition, setCursorInnerPosition] = useRecoilState(cursorInnerPositionAtom)
   // for drawing board
-  const canvasRef = useRef()
-  const [canvas, setCanvas] = useRecoilState(canvasAtom)
-  const [canvasContext, setCanvasContext] = useRecoilState(canvasContextAtom)
-
-  const handleMouseMove = e => {
-    setCursorInnerPosition({x: e.clientX, y: e.clientY})
-  }
+  const canvas = useRef()
 
   // for redirecting user to the next or prev route on scroll
   const onScroll = e => {
@@ -50,7 +38,6 @@ function App() {
       setCurrentRouteIndex(currentRouteIndex - 1)
     }
   }
-  
   // for setting current route index when url changes
   useEffect(() => {
     for (let routeIndex=0; routeIndex < routes.length; routeIndex++) {
@@ -61,19 +48,10 @@ function App() {
     }
   }, [location.pathname])
 
-  useEffect(() => {
-    setCanvas(canvasRef.current)
-  }, [canvasRef])
-
   return (
     // this is for disabling selecting if current route is home
-    <div className={`app${location.pathname === '/' ? ' no-select': ''}`}
-      onWheel={onScroll}
-      onMouseDown={() => setCursorIsActive(true)}
-      onMouseUp={() => setCursorIsActive(false)}
-      onMouseMove={handleMouseMove}
-    >
-      <canvas ref={canvasRef} className='graph'/>
+    <div className={`app${location.pathname === '/' ? ' no-select' : ''}`} onWheel={onScroll}>
+      <canvas ref={canvas} className='graph'/>
         <TransitionGroup component={null}>
           <CSSTransition
             key={location.key}
@@ -91,9 +69,8 @@ function App() {
           </CSSTransition>
         </TransitionGroup>
       {/* this is for getting drawing board after rendering */}
-      {/* {canvas.current && <Cursor canvas={canvas}/>}  */}
-      {canvas && <CursorV2 canvas={canvas}/>} 
-      {canvas && <FixedNav canvas={canvas}/>}
+      {canvas.current && <Cursor canvas={canvas}/>} 
+      {canvas.current && <FixedNav canvas={canvas}/>}
       <Menu />
     </div>
   )
