@@ -405,28 +405,6 @@ a {
     }
 }
 
-.fade {
-    // &-enter {
-    // opacity: 0;
-    // transform: scale(0.9);
-    // }
-    // &-enter-active {
-    // opacity: 1;
-    // transform: none;
-    // transition: opacity 300ms, transform 300ms;
-    // }
-    // &-exit {
-    // opacity: 1;
-    // }
-    // &-exit-active {
-    // opacity: 0;
-    // transform: scale(0.8);
-    // transition: opacity 300ms, transform 300ms;
-    // }
-
-    
-}
-
 .fade-enter {
     opacity: 0;
     transform: translateY(-40px);

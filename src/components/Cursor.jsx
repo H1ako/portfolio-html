@@ -1,10 +1,11 @@
 // global
 import { useRef, useState, useCallback, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
+import { useRecoilState } from 'recoil'
+// recoil atoms
+import { cursorColorAtom } from '../../recoil_atoms/CursorAtom'
 // hooks
 import useEventListener from '../../hooks/useEventListener'
-// recoil
-import { useRecoilState } from 'recoil'
-import { cursorColorAtom } from '../../recoil_atoms/CursorAtom'
 
 export default function Cursor({
     canvas,
@@ -13,6 +14,7 @@ export default function Cursor({
     outerSpeedSlow = 50,
     outerSpeedDefault = 10,
   }) {
+    const location = useLocation()
     // for cursor body
     const cursorOuterRef = useRef()
     const cursorInnerRef = useRef()
@@ -93,9 +95,10 @@ export default function Cursor({
     useEffect(() => requestRef.current = requestAnimationFrame(animateOuterCursor), [animateOuterCursor])
 
     const onMouseDown  = useCallback(() => {
+      if (location.pathname !== '/') return
       outerSpeed.current = outerSpeedSlow
       isActive.current = true
-    }, [])
+    }, [location])
     const onMouseUp    = useCallback(() => {
       outerSpeed.current = outerSpeedDefault
       isActive.current = false
